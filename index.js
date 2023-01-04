@@ -5,6 +5,16 @@ const fs = require("fs");
 
 const app = express();
 
+const admin = require("firebase-admin");
+const dotenv = require('dotenv');
+dotenv.config();
+
+admin.initializeApp({
+    credential: admin.credential.cert(JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT)),
+    // credential: applicationDefault(),
+    databaseURL: "https://were-wolves-default-rtdb.firebaseio.com"
+});
+
 // app.get('/', (req, res) => {
 //
 // });
@@ -24,12 +34,12 @@ for (const file of commandFiles) {
     }
 }
 
-app.post('/interactions', verifyKeyMiddleware(process.env['werewolf-discord_public-key']), (req, res) => {
+app.post('/interactions', verifyKeyMiddleware(process.env['werewolf-discord_public-key']), async (req, res) => {
     const interaction = req.body;
     const { data } = interaction;
 
     // Handle different slash commands
-    res.send(commands[data?.name].execute(interaction))
+    res.send(await commands.get(data?.name).execute(interaction))
 });
 
 app.listen(3000, () => {
