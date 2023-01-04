@@ -8,7 +8,7 @@ const app = express();
 //
 // });
 
-app.post('/interactions', verifyKeyMiddleware(process.env.CLIENT_PUBLIC_KEY), (req, res) => {
+app.post('/interactions', verifyKeyMiddleware(process.env['werewolf-discord_public-key']), (req, res) => {
     const interaction = req.body;
     const { data } = interaction;
 
