@@ -1,6 +1,6 @@
 const fetch = require("node-fetch");
 
-export async function DiscordRequest({endpoint, body, method}) {
+exports.DiscordRequest = async ({endpoint, body, method}) => {
     // append endpoint to root API URL
     const url = 'https://discord.com/api/v10/' + endpoint;
     const options = {method: method}
@@ -23,7 +23,7 @@ export async function DiscordRequest({endpoint, body, method}) {
     }
     // return original response
     return res;
-}
+};
 // export async function DiscordRequest(endpoint, options) {
 //     // append endpoint to root API URL
 //     const url = 'https://discord.com/api/v10/' + endpoint;

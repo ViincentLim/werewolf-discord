@@ -1,12 +1,12 @@
 const {InteractionResponseType} = require("discord-interactions");
 
 const admin = require("firebase-admin");
+const {Application_Command_Option_Type} = require("../enums");
 
 module.exports = {
     data: {
         name: 'new',
         description: 'Creates a new game.',
-        type: 1,
     },
     async execute(interaction) {
         const db = admin.database()

@@ -4,7 +4,6 @@ module.exports = {
     data: {
         name: 'hello',
         description: 'Say hello to bot.',
-        type: 1,
     },
     async execute(interaction) {
         return {

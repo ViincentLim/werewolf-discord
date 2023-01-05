@@ -39,7 +39,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env['werewolf-discord_publ
     const { data } = interaction;
 
     // Handle different slash commands
-    res.send(await commands.get(data?.name).execute(interaction))
+    res.send(await commands.get(data?.name)?.execute(interaction))
 });
 
 app.listen(3000, () => {
