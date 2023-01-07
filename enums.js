@@ -16,3 +16,9 @@ exports.Message_Flags = {
     SUPPRESS_EMBEDS: 1 << 2,
     EPHEMERAL: 1 << 6
 }
+exports.Html_Method = {
+    POST: 'POST',
+    GET: 'GET',
+    PUT: 'PUT',
+    DELETE: 'DELETE',
+}

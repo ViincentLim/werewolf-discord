@@ -18,13 +18,23 @@ module.exports = {
             },
         ]
     },
-    async execute(interaction) {
-        console.log(interaction.options)
+    async execute(interaction, gameState) {
+        console.log(interaction.data.options)
+        const playerIDs = interaction.data.options.map(option => Number(option.value))
+        const uid = Number(interaction.member.user.id)
         // todo create you from uid
         // todo retrieve players from uid
+        // todo retrieve gameState from db
+
         return {
-            content: `Checked!`,
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+                content: `Checked!`,
+            }
         }
-        // return you.check(players, gameState)
+        // return {
+        //     type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        //     data: you.check(players, gameState)
+        // }
     }
 }

@@ -8,10 +8,10 @@ module.exports = {
         name: 'new',
         description: 'Creates a new game.',
     },
-    async execute(interaction) {
-        const db = admin.database()
-        await db.ref('test').set(interaction.data)
-        // todo: create game on db with channel id
+    async execute(interaction, gameState) {
+        // const db = admin.database()
+        // await db.ref('test').set(interaction.data)
+        // // todo: create game on db with channel id
         return {
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: {

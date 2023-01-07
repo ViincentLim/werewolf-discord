@@ -1,6 +1,7 @@
 const {DiscordRequest} = require("./discord_request");
 const path = require("path");
 const fs = require("fs");
+const {Html_Method} = require("./enums");
 
 async function createCommand(command) {
     const appId = process.env['werewolf-discord_app-id'];
@@ -28,7 +29,7 @@ async function createCommand(command) {
         // Send HTTP request with bot token
         const res = await DiscordRequest({
             endpoint: globalEndpoint,
-            method: 'POST',
+            method: Html_Method.POST,
             body: command,
         });
         // console.log(await res.json());
@@ -62,7 +63,7 @@ async function overwriteAllCommands(commands) {
         // Send HTTP request with bot token
         const res = await DiscordRequest({
             endpoint: globalEndpoint,
-            method: 'PUT',
+            method: Html_Method.PUT,
             body: commands,
         });
         // console.log(await res.json());
@@ -97,7 +98,7 @@ async function deleteCommand(commandName) {
         // Send HTTP request with bot token
         const res = await DiscordRequest({
             endpoint: globalEndpoint,
-            method: 'DELETE',
+            method: Html_Method.DELETE,
         });
         // console.log(await res.json());
         // console.log('success')

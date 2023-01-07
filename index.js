@@ -18,28 +18,44 @@ admin.initializeApp({
 // app.get('/', (req, res) => {
 //
 // });
+const db = admin.database()
+const gameStates = {}
 
-const commands = new Map()
-const commandsPath = path.join(__dirname, 'commands');
-const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+function getCommands() {
+    const commands = new Map()
+    const commandsPath = path.join(__dirname, 'commands');
+    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
-for (const file of commandFiles) {
-    const filePath = path.join(commandsPath, file);
-    const command = require(filePath);
-    // Set a new item in the Collection with the key as the command name and the value as the exported module
-    if ('data' in command && 'execute' in command) {
-        commands.set(command.data.name, command);
-    } else {
-        console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+    for (const file of commandFiles) {
+        const filePath = path.join(commandsPath, file);
+        const command = require(filePath);
+        // Set a new item in the Collection with the key as the command name and the value as the exported module
+        if ('data' in command && 'execute' in command) {
+            commands.set(command.data.name, command);
+        } else {
+            console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+        }
     }
+    return commands;
 }
 
+const commands = getCommands();
+
+const gameStatesPath = db.ref('games');
 app.post('/interactions', verifyKeyMiddleware(process.env['werewolf-discord_public-key']), async (req, res) => {
     const interaction = req.body;
     const { data } = interaction;
+    const channelId = interaction.channel_id;
+
+    if (!gameStates[channelId]) {
+        gameStates[channelId] = (await gameStatesPath.child(channelId).get()).val()
+    }
 
     // Handle different slash commands
-    res.send(await commands.get(data?.name)?.execute(interaction))
+    const gameState = gameStates[channelId];
+    const reply = await commands.get(data?.name)?.execute(interaction, gameState);
+    await gameStatesPath.child(channelId).set(gameState)
+    res.send(reply)
 });
 
 app.listen(3000, () => {
