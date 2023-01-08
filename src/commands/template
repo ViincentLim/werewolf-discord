@@ -1,0 +1,16 @@
+const HelloCommand: Command = {
+    data: {
+        name: ??,
+        description: ??,
+    },
+    async execute(interaction, gameState) {
+        return {
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+                content: ??,
+            },
+        }
+    }
+}
+
+export default HelloCommand

@@ -2,8 +2,9 @@
   "name": "werewolf-discord",
   "version": "1.0.0",
   "scripts": {
-    "start": "node .",
-    "deploy_commands": "node ./deploy_commands.js"
+    "build": "tsc",
+    "start": "npm run build && node ./dist",
+    "deploy_commands": "node src/deploy_commands.ts"
   },
   "dependencies": {
     "discord-interactions": "^3.2.0",
@@ -11,5 +12,9 @@
     "express": "^4.18.2",
     "firebase-admin": "^11.4.1",
     "node-fetch": "^2.6.7"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.15",
+    "@types/node-fetch": "^2.6.2"
   }
 }
