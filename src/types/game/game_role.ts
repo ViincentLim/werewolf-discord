@@ -1,3 +1,5 @@
+import {seer} from "../../roles/seer";
+
 export enum RoleName {
     medic = "medic",
     seer = "seer",
@@ -8,11 +10,11 @@ export enum RoleName {
     gunner = "gunner",
 }
 
-export const RoleDescription: {[key: string]: string;} = {
-    [RoleName.medic]: "Every night, you can /protect a player. When the player is attacked that night, they do not die. You win with the villager team.",
-    [RoleName.seer]: "Every night, you can /check if a player is good, evil or unknown. You win with the villager team.",
-    [RoleName.werewolf]: "Once you become werewolf, you are invited to a werewolf channel. Every night, you can discuss with other werewolves and vote who to kill. You win with the werewolf team.",
-}
+// export const RoleDescription: {[key: string]: string;} = {
+//     [RoleName.medic]: "Every night, you can /protect a player. When the player is attacked that night, they do not die. You win with the villager team.",
+//     [RoleName.seer]: "Every night, you can /check if a player is good, evil or unknown. You win with the villager team.",
+//     [RoleName.werewolf]: "Once you become werewolf, you are invited to a werewolf channel. Every night, you can discuss with other werewolves and vote who to kill. You win with the werewolf team.",
+// }
 
 export const roleTypeToRoles: {[index: string]:RoleName[]} = {
     protectiveVillagers: [RoleName.medic],
@@ -47,10 +49,15 @@ export const roleAssignmentList = [
 export type Role = {
     playerId: string
     init: () => void
+    description: string
 }
-// export function getRole(role: RoleName) {
-//     switch (role) {
-//         case RoleName.seer:
-//             return seer
-//     }
-// }
+export function getRole(role: RoleName): Role {
+    // todo: consider filename method, dynamic import
+    switch (role) {
+        case RoleName.seer:
+            return seer
+        default:
+            // TODO: temporary
+            return seer
+    }
+}

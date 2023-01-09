@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin"
 import {Command} from "../types/command";
-import {userToNewPlayer} from "./join";
+import {createPlayerFromUser} from "./join";
 
 const {InteractionResponseType} = require("discord-interactions");
 
@@ -15,7 +15,7 @@ const NewCommand: Command = {
             started: false,
             events: [],
             players: {
-                [interaction.member!.user.id]: userToNewPlayer(interaction.member!.user)
+                [interaction.member!.user.id]: createPlayerFromUser(interaction.member!.user)
             },
             phaseCount: -1,
             everyEvents: {night: {}, discussion: {}, voting: {}},

@@ -33,7 +33,7 @@ const gameStates: {[key: string]: GameState} = {}
 function getCommands() {
     const commands: Map<string, Command> = new Map()
     const commandsPath = path.join(__dirname, 'commands');
-    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+    const commandFiles = fs.readdirSync(commandsPath);//.filter(file => file.endsWith('.js'));
 
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
@@ -60,7 +60,7 @@ app.post('/interactions', verifyKeyMiddleware(process.env['werewolf-discord_publ
     if (!gameStates[channel_id]) {
         gameStates[channel_id] = (await gameStatesPath.child(channel_id).get()).val()
     }
-    // TODO: deal with dm vs channel commands (no channel_id for example)
+    // TODO: deal with dm vs channel commands (user vs member in interaction)
     // Handle different slash commands
     const gameState = gameStates[channel_id];
     if (!gameState) {

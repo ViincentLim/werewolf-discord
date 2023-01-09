@@ -2,7 +2,7 @@ import {Command} from "../types/command";
 import {Interaction} from "../types/interaction";
 import {GameState} from "../types/game/game";
 import {InteractionResponseFlags} from "discord-interactions";
-import {RoleDescription} from "../types/game/game_role";
+import {getRole} from "../types/game/game_role";
 
 const {InteractionResponseType} = require("discord-interactions");
 
@@ -43,7 +43,7 @@ const RoleCommand: Command = {
         return {
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: {
-                content: `Your role is ${player.role}.\n\n${RoleDescription[player.role]}`,
+                content: `Your role is ${player.role}.\n\n${getRole(player.role).description}`,
                 flags: InteractionResponseFlags.EPHEMERAL
             },
         }

@@ -3,7 +3,7 @@ import {Player} from "../types/game/game";
 import {Command} from "../types/command";
 import {InteractionResponseType} from "discord-interactions";
 
-export function userToNewPlayer(user: DiscordUser) : Player {
+export function createPlayerFromUser(user: DiscordUser) : Player {
     return {
         name: `${user.username}#${user.discriminator}`,
         // role: undefined,
@@ -20,7 +20,7 @@ const JoinCommand: Command = {
     },
     async execute(interaction, gameState) {
         const user = interaction.member!.user;
-        const player = userToNewPlayer(user);
+        const player = createPlayerFromUser(user);
         gameState.players[user.id] = player
         // todo edit original newGame message to add this player in??
         return {

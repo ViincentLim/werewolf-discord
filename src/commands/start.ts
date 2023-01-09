@@ -12,6 +12,8 @@ import {
 } from "../types/game/game";
 import {Command} from "../types/command";
 import {roleAssignmentList, roleTypeToRoles} from "../types/game/game_role";
+import {actionComparatorLess, Attack, Protect} from "../types/game/phase_events";
+import {mergeObjectsWithArrayAsValue} from "../extensions/helper_functions";
 
 const sleep = promisify(setTimeout);
 
@@ -32,19 +34,42 @@ async function beginNightPhase(gameState: GameState, channelId: string) {
     // gameState.attacks = []
     const everyNightEvents = gameState.everyEvents.night
     const thisNightEvents = gameState.events[gameState.phaseCount/3]
-    for (const [to, attacks] of Object.entries(thisNightEvents.attacks)) {
-        // todo: check protection
-        for (const attack of attacks) {
-            // todo: do sth to "to"
-            // todo: then, role.onAttackSuccess
+    const allAttacks = (mergeObjectsWithArrayAsValue(everyNightEvents.attacks || {}, thisNightEvents.attacks || {}) as { [key: string]: Attack[] });
+    const allProtects = (mergeObjectsWithArrayAsValue(everyNightEvents.protects || {}, thisNightEvents.protects || {}) as { [key: string]: Protect[] });
+    for (const [to, attacks] of Object.entries(allAttacks)) {
+        // todo role.onAttack()
+        // todo: check onAttacks
+        /*
+        for each attack, check if there is protection
+        else kill
+         */
+        const protects = allProtects[to].sort(actionComparatorLess);
+        for (const attack of attacks.sort(actionComparatorLess)) { // ascending
+            let isProtected = false
+            for (const protect of protects) {
+                if (protect.against.includes(attack.type)) {
+                    // Protect successful
+                    switch (protect.type) {
+                        // TODO: witch, deduct potion or sth... etc
+                    }
+                    isProtected = true
+                }
+            }
+            if (!isProtected) {
+                // KILL
+                    // killed by who on gameState.players.player
+                gameState.players[to].killed = attack.from
+                // trigger onDead, onAttackSuccess
+                // add log to gameState to inform players??
+            }
         }
     }
-    for (const attack of everyNightEvents.attacks || []) {
-        console.log(attack) //TODO: attack protect logic
-    }
-    for (const attack of thisNightEvents.attacks || []) {
-        console.log(attack) //TODO: attack protect logic
-    }
+    // for (const attack of everyNightEvents.attacks || []) {
+    //     console.log(attack) //TODO: attack protect logic
+    // }
+    // for (const attack of thisNightEvents.attacks || []) {
+    //     console.log(attack) //TODO: attack protect logic
+    // }
     // for each attack, check if protected or invulnerable
     // TODO check if game is over (anyone won or stop prematurely)
     // else beginDiscussion

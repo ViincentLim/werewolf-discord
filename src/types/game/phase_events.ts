@@ -1,24 +1,49 @@
 export type PhaseEvents = {
     // attacks?: Attack[]
     attacks?: { [key: string]: Attack[] }
-    protections?: { [key: string]: Protection[] }
+    protects?: { [key: string]: Protect[] }
     // onAttacked?: { [key: string]: OnInflicted }
     // onDead?: { [key: string]: OnInflicted }
     // onNights
 }
 
-export type Attack = {
+// ascending
+export function actionComparatorLess(a: Action, b: Action) {
+    return a.type - b.type
+}
+// descending
+export function actionComparatorGreater(a: Action, b: Action) {
+    return b.type - a.type
+}
+
+export interface Action {
+    type: number,
+
+}
+
+export interface Attack extends Action {
     from: string,
     // to: string,
     type: AttackType, // an enum which has an order of attack level => eg ww attack then solo killers
     // type: AttackType
 }
 
-export type Protection = {
+export interface Protect extends Action {
     from: string,
+    against: AttackType[],
     // to: string,
-    type: ProtectionType, // an enum which has an order of protection level => eg use medic's protection then witch's
+    type: ProtectType, // an enum which has an order of protection level => eg use medic's protection then witch's
     // type: AttackType
+}
+// in ascending order, the order of what happens first (0= most priority)
+export enum AttackType {
+    werewolf,
+    solo,
+}
+
+export enum ProtectType {
+    medic,
+    witch,
 }
 
 /*
@@ -47,11 +72,3 @@ eg. baby ww.onDead
     thenOption: playerId
 }
  */
-export type OnInflicted = {
-    // victim: string
-    // the player who added this onAttack
-    player: string
-    // playerRole: RoleName
-    then: string// todo: use enums
-    // type: AttackType
-}
