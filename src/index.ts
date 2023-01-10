@@ -1,17 +1,17 @@
 import express from "express"
 import {Request, Response} from "express";
 // import { InteractionType, InteractionResponseType, verifyKeyMiddleware } from 'discord-interactions'
-import { verifyKeyMiddleware } from 'discord-interactions'
+import {InteractionType, verifyKeyMiddleware} from 'discord-interactions'
 import * as path from "path"
 import * as fs from "fs"
-import {Command} from "./types/command";
-import {GameState} from "./types/game/game";
+import {Command} from "./discord/command";
+import {GameState} from "./game/game";
 // import {Database} from "firebase-admin/lib/database";
 import * as dotenv from "dotenv"
 import * as admin from "firebase-admin"
 import {database} from "firebase-admin";
 import Database = database.Database;
-import {Interaction} from "./types/interaction";
+import {Interaction} from "./discord/interaction";
 
 const app = express();
 
@@ -33,11 +33,11 @@ const gameStates: {[key: string]: GameState} = {}
 function getCommands() {
     const commands: Map<string, Command> = new Map()
     const commandsPath = path.join(__dirname, 'commands');
-    const commandFiles = fs.readdirSync(commandsPath);//.filter(file => file.endsWith('.js'));
+    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
-        const command: Command = require('commands/check');
+        const command: Command = require(filePath).default;
         // Set a new item in the Collection with the key as the command name and the value as the exported module
         if ('data' in command && 'execute' in command) {
             commands.set(command.data.name, command);
@@ -49,6 +49,8 @@ function getCommands() {
 }
 
 const commands = getCommands();
+console.log(commands.keys())
+console.log("hello?")
 
 const gameStatesPath = db.ref('games');
 app.post('/interactions', verifyKeyMiddleware(process.env['werewolf-discord_public-key'] || ""), async (req: Request, res: Response) => {
@@ -66,9 +68,17 @@ app.post('/interactions', verifyKeyMiddleware(process.env['werewolf-discord_publ
     if (!gameState) {
         // only allow "/new", else return and ask user to create new game first
     }
-    const reply = await commands.get(commandName)?.execute(interaction, gameState);
-    await gameStatesPath.child(channel_id).set(gameState)// or dont await
-    res.send(reply)
+    switch (interaction.type) {
+        case InteractionType.APPLICATION_COMMAND:
+        case InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE:
+            const reply = await commands.get(commandName)?.execute(interaction, gameState);
+            await gameStatesPath.child(channel_id).set(gameState)// or dont await
+            res.send(reply)
+            break
+        case InteractionType.MESSAGE_COMPONENT:
+            // todo: for dropdown and checkboxes
+            break
+    }
 });
 
 app.listen(3000, () => {

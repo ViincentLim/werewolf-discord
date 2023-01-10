@@ -5,11 +5,12 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "removeComments": true,
-    "outDir": "lib",
+    "outDir": "dist",
     "sourceMap": true,
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "moduleResolution": "node",
   },
   "compileOnSave": true,
   "include": [

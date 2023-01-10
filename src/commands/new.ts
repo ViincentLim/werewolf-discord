@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin"
-import {Command} from "../types/command";
+import {Command} from "../discord/command";
 import {createPlayerFromUser} from "./join";
 
 const {InteractionResponseType} = require("discord-interactions");
@@ -20,6 +20,9 @@ const NewCommand: Command = {
             phaseCount: -1,
             everyEvents: {night: {}, discussion: {}, voting: {}},
         }
+        // if (gameState.wwChannel) {
+        //     // TODO: delete previous werewolf channel
+        // }
         await db.ref('games').child(interaction.channel_id).set(gameState)
         return {
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,

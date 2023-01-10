@@ -1,4 +1,5 @@
 import {DiscordRequest} from "./discord_request"
+// const {DiscordRequest} = require("./discord_request")
 const path = require("path");
 const fs = require("fs");
 import {HtmlMethod} from "./enums"
@@ -126,6 +127,6 @@ const commandFiles: string[] = fs.readdirSync(commandsPath).filter((file: string
 
 overwriteAllCommands(commandFiles.map((file: string) => {
     const commandFilePath = path.join(commandsPath, file);
-    const command = require(commandFilePath);
+    const command = require(commandFilePath).default;
     return command.data;
 }))

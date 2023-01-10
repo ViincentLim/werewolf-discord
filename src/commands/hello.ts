@@ -1,4 +1,4 @@
-import {Command} from "../types/command";
+import {Command} from "../discord/command";
 
 const {InteractionResponseType} = require("discord-interactions");
 

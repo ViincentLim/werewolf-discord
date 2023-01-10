@@ -1,8 +1,8 @@
-import {Command} from "../types/command";
-import {Interaction} from "../types/interaction";
-import {GameState} from "../types/game/game";
+import {Command} from "../discord/command";
+import {Interaction} from "../discord/interaction";
+import {GameState} from "../game/game";
 import {InteractionResponseFlags} from "discord-interactions";
-import {getRole} from "../types/game/game_role";
+import {getRole} from "../game/game_role";
 
 const {InteractionResponseType} = require("discord-interactions");
 

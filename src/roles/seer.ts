@@ -14,8 +14,10 @@
 //     }
 // }
 
-import {Role} from "../types/game/game_role";
+import {Role} from "../game/game_role";
 
 export const seer: Role = {
+    init(): void {},
+    // playerId: "",
     description: "Every night, you can /check if a player is good, evil or unknown. You win with the villager team.",
 }

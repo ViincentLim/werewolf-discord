@@ -1,6 +1,6 @@
-import {DiscordUser} from "../types/interaction";
-import {Player} from "../types/game/game";
-import {Command} from "../types/command";
+import {DiscordUser} from "../discord/interaction";
+import {Player} from "../game/game";
+import {Command} from "../discord/command";
 import {InteractionResponseType} from "discord-interactions";
 
 export function createPlayerFromUser(user: DiscordUser) : Player {

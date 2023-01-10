@@ -1,4 +1,5 @@
-import {seer} from "../../roles/seer";
+import {seer} from "../roles/seer";
+import {GameState} from "./game";
 
 export enum RoleName {
     medic = "medic",
@@ -47,8 +48,8 @@ export const roleAssignmentList = [
 ]
 
 export type Role = {
-    playerId: string
-    init: () => void
+    // playerId: string
+    init: (playerId: string, gameState: GameState) => void
     description: string
 }
 export function getRole(role: RoleName): Role {

@@ -2,17 +2,17 @@ import {InteractionResponseType} from "discord-interactions"
 import {HtmlMethod} from "../enums"
 import {DiscordRequest} from "../discord_request"
 import {promisify} from 'util'
-import {Interaction} from "../types/interaction";
+import {Interaction} from "../discord/interaction";
 import {
     GameState,
     maxPlayers,
     minPlayers,
     Phase, PhaseInfo,
     Player,
-} from "../types/game/game";
-import {Command} from "../types/command";
-import {roleAssignmentList, roleTypeToRoles} from "../types/game/game_role";
-import {actionComparatorLess, Attack, Protect} from "../types/game/phase_events";
+} from "../game/game";
+import {Command} from "../discord/command";
+import {roleAssignmentList, roleTypeToRoles} from "../game/game_role";
+import {actionComparatorLess, Attack, Protect} from "../game/phase_events";
 import {mergeObjectsWithArrayAsValue} from "../extensions/helper_functions";
 
 const sleep = promisify(setTimeout);
@@ -132,6 +132,8 @@ const StartCommand: Command = {
         // send message to each role, OK maybe not, can just /role
         // TODO role.init() => set Player.status (eg how many potions, how many lives, hh target)
         gameState.started = true
+        // todo: create private ww channel, set gameState.wwChannel, then createInvite
+        // await CreateDiscordInvite(wwChannel, 600, 0)
         beginNightPhase(gameState, interaction.channel_id)
         return {
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,

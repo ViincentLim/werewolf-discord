@@ -1,7 +1,8 @@
 import {InteractionResponseType} from "discord-interactions"
 import {ApplicationCommandOptionType} from "../enums"
-import {Command} from "../types/command";
-import {Interaction} from "../types/interaction";
+import {Command} from "../discord/command";
+import {Interaction} from "../discord/interaction";
+import {GameState} from "../game/game";
 
 const CheckCommand: Command = {
     data: {
@@ -22,18 +23,18 @@ const CheckCommand: Command = {
         ]
     },
     async execute(interaction: Interaction, gameState: GameState) {
-        console.log(interaction.data.options)
-        const playerIDs = interaction.data.options?.map(option => Number(option.value)) || []
-        const uid = Number(interaction.member?.user.id)
-        // todo get your role from uid
-        /*
-        get your role from uid
-        get player(s)' role from pid
-        from phaseEvents, call onChecks
-        if no onChecks, reply getAura(role)
-         */
-        // todo retrieve players from uid
-        // todo retrieve gameState from db
+        // console.log(interaction.data.options)
+        // const playerIDs = interaction.data.options?.map(option => Number(option.value)) || []
+        // const uid = Number(interaction.member?.user.id)
+        // // todo get your role from uid
+        // /*
+        // get your role from uid
+        // get player(s)' role from pid
+        // from phaseEvents, call onChecks
+        // if no onChecks, reply getAura(role)
+        //  */
+        // // todo retrieve players from uid
+        // // todo retrieve gameState from db
 
         return {
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
