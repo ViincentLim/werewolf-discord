@@ -1,19 +1,20 @@
 import express, {Request, Response} from "express"
-// import { InteractionType, InteractionResponseType, verifyKeyMiddleware } from 'discord-interactions'
 import {InteractionResponseType, InteractionType, verifyKeyMiddleware} from 'discord-interactions'
 import * as path from "path"
 import * as fs from "fs"
 import {Command} from "./discord/command";
 import {GameState} from "./game/game";
-// import {Database} from "firebase-admin/lib/database";
 import * as dotenv from "dotenv"
 import {Interaction, InteractionResponse} from "./discord/interaction";
 import e from "express";
-import {wwGuildId} from "./game/game_constants";
+import {newCommandId, wwGuildId} from "./game/game_constants";
 import {gameStatesPath, wwChannelPath} from "./firebase/firebase_setup";
+import NewCommand from "./commands/new";
+import {setUpExtensions} from "./utility/extension";
 
 const app = express();
 dotenv.config();
+setUpExtensions()
 
 // app.get('/', (req, res) => {
 //
@@ -57,11 +58,11 @@ async function handleAppCommand(interaction: Interaction, res: e.Response<any, R
 
     let reply: InteractionResponse
     // Handle different slash commands
-    if (!gameState) {
+    if (!gameState && commandName !== NewCommand.data.name) {
         reply = {
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: {
-                content: "Please use </new:1060219085834702959> to create a new game."
+                content: `Please use </new:${newCommandId}> to create a new game.`
             }
         };
         // only allow "/new", else return and ask user to create new game first
@@ -70,7 +71,9 @@ async function handleAppCommand(interaction: Interaction, res: e.Response<any, R
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: (await commands.get(commandName)?.execute(interaction, gameState)) || {}
         }
-        await gameStatesPath.child(interaction.channel_id).set(gameState)// or dont await
+        if (gameState) {
+            await gameStatesPath.child(interaction.channel_id).set(gameState)// or dont await
+        }
     }
     res.send(reply)
 }
