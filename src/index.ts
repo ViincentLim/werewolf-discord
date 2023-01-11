@@ -20,7 +20,7 @@ setUpExtensions()
 //
 // });
 const gameStates: {[key: string]: GameState} = {}
-
+// TODO. continue night phase, discussion phase etc
 function getCommands() {
     const commands: Map<string, Command> = new Map()
     const commandsPath = path.join(__dirname, 'commands');

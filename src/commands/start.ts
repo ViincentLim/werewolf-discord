@@ -26,7 +26,11 @@ const StartCommand: Command = {
                 content: `You can only have at most ${maxPlayers} players.`,
             }
         }
-
+        if (gameState.started) {
+            return {
+                content: 'Game has already started.'
+            }
+        }
         await onGameStarted(gameState, interaction);
         return {
             content: `Game started. Send </role:${roleCommandId}> to get your role`,

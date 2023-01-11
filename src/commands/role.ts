@@ -39,7 +39,6 @@ const RoleCommand: Command = {
         return {
             content: content,
             flags: InteractionResponseFlags.EPHEMERAL
-
         }
     }
 }

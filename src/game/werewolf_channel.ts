@@ -1,4 +1,3 @@
-import {Interaction} from "../discord/interaction";
 import {GameState} from "./game";
 import {CreateChannel, DeleteChannel} from "../discord/discord_channel";
 import {wwGuildId} from "./game_constants";
@@ -7,9 +6,9 @@ import {CreateDiscordInvite} from "../discord/discord_invite";
 import {DiscordRequest} from "../discord_request";
 import {wwChannelPath} from "../firebase/firebase_setup";
 
-export async function createWerewolfChannel(interaction: Interaction, gameState: GameState) {
+export async function createWerewolfChannel(gameChannelId: string, gameState: GameState) {
     const channel = (await (await CreateChannel(wwGuildId, {
-        name: `Werewolf Chat ${interaction.channel_id}`,
+        name: `Werewolf Chat ${gameChannelId}`,
         type: ChannelType.GUILD_TEXT,
         topic: "This channel is for communication between werewolves at night. Every night, you can discuss and vote who to kill. In the day, the channel would be unavailable.",
         permission_overwrites: [
@@ -22,7 +21,7 @@ export async function createWerewolfChannel(interaction: Interaction, gameState:
     })).json())
     gameState.wwChannel = String(channel.id)
     const promises: Promise<any>[] = []
-    promises.push(wwChannelPath.child(gameState.wwChannel).set(interaction.channel_id))
+    promises.push(wwChannelPath.child(gameState.wwChannel).set(gameChannelId))
     promises.push(new Promise<void>(async resolve => {
         gameState.wwInvite = (await (await CreateDiscordInvite(gameState.wwChannel!, 6000, 0)).json()).code
         resolve()
@@ -50,6 +49,7 @@ async function deleteWerewolfGuildRole(gameState: GameState) {
 
 async function addUsersToWerewolfGuild(gameState: GameState, users: string[]) {
     const addGuildMemberPromises: Promise<any>[] = []
+    console.log('users'+users)
     for (const user of users) {
         addGuildMemberPromises.push(
             DiscordRequest({

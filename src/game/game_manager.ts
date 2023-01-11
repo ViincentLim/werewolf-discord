@@ -7,7 +7,6 @@ import {calculateWinCondition} from "./win_condition";
 import {SendMessage} from "../discord/discord_message";
 import {gameStatesPath} from "../firebase/firebase_setup";
 
-
 function assignRoles(players: {[key: string]: Player;}, roleAssignmentList: (string|RoleName)[]) {
     const shuffledRoleList = roleAssignmentList.splice(0, Object.values(players).length).shuffle()
     for (const player of Object.values(players)) {
@@ -18,7 +17,7 @@ function assignRoles(players: {[key: string]: Player;}, roleAssignmentList: (str
 }
 
 function getGameStateMessage(gameState: GameState) {
-    return `
+    const s = `
     Players:
     ${Object.values(gameState.players).map(player => {
         let name = `${player.name}`;
@@ -29,13 +28,17 @@ function getGameStateMessage(gameState: GameState) {
         return `• ${name} ${player.revealed ? `(${player.role})` : ""}\n`
     })}
     
-    What happened:
-    ${gameState.logs[gameState.phaseCount].map(log => {
-        return `• ${log}\n`
-    })}
+    ${gameState.logs && gameState.logs[gameState.phaseCount] ? `
+        What happened:
+        ${gameState.logs[gameState.phaseCount].map(log => {
+            return `• ${log}\n`
+        })}`
+        : ""
+    }
     
     ${gameState.ended && gameState.winner ? `Game ended, ${gameState.players[gameState.winner || ""]?.name || gameState.winner} won` : ""}
     `;
+    return s;
 }
 
 export function newPhase(phase: Phase): PhaseInfo {
@@ -54,11 +57,14 @@ export async function onGameStarted(gameState: GameState, interaction: Interacti
         getRole(player.role!).init(player)
     }
     gameState.started = true
+    // await createWerewolfChannel(interaction, gameState)
+    // await sendGameStateMessage(interaction.channel_id, gameState)
     const promises: Promise<any>[] = []
-    promises.push(createWerewolfChannel(interaction, gameState))
+    promises.push(createWerewolfChannel(interaction.channel_id, gameState))
     promises.push(sendGameStateMessage(interaction.channel_id, gameState))
-    beginNightPhase(gameState, interaction.channel_id)
     await Promise.all(promises)
+    //
+    beginNightPhase(gameState, interaction.channel_id)
 }
 
 export async function onGameEnded(gameState: GameState, channelId: string) {

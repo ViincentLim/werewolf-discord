@@ -20,7 +20,7 @@ function addLog(gameState: GameState, log: string) {
 export async function beginNightPhase(gameState: GameState, channelId: string) {
     gameState.phase = newPhase(Phase.night);
     SendMessage(channelId, {
-        content: `Night phase ends ${gameState.phase[1] / 1000 + nightLengthSeconds}`
+        content: `Night phase ends ${Math.round(gameState.phase[1] / 1000 + nightLengthSeconds)}`
     })
     // allow permission for ww to send msg on wwChannel
     await EditPermission({

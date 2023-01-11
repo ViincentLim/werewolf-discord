@@ -5,10 +5,11 @@
 
 // import {DiscordRequest} from "./discord_request";
 // import {HtmlMethod, PermissionFlags} from "./enums";
-import {EditPermission} from "./discord/manage_permission";
-import {PermissionFlags} from "./enums";
+import {DiscordRequest} from "./discord_request";
+import {wwGuildId} from "./game/game_constants";
+import {HtmlMethod} from "./enums";
+import {DeleteChannel} from "./discord/discord_channel";
 
-let guildId = "1062251357769310298";
 // DiscordRequest({
 //     endpoint: `guilds/${guildId}/channels`,
 //     method: HtmlMethod.GET,
@@ -40,5 +41,43 @@ async function main() {
     // })
     // console.log(await (await AllowViewChannelPermission({guildId: guildId, channelId: "1062267500601024542", userId: "1059804790726598717"})).json())
     // console.log(await (await EditPermission({allow:0, deny:0,guildId: guildId, channelId: "1062267500601024542", userId: "1059804790726598717"})).json())
-    console.log(await (await EditPermission({deny:PermissionFlags.SEND_MESSAGES, guildId: guildId, channelId: "1062267500601024542"})).json())
+    // console.log(await (await EditPermission({deny:PermissionFlags.SEND_MESSAGES, guildId: guildId, channelId: "1062267500601024542"})).json())
+
+    // const gameState: GameState = (await gameStatesPath.child("1062677569239011340").get()).val()
+    // console.log(await createWerewolfChannel("1062677569239011340", gameState))
+    // console.log(gameState)
+    // await gameStatesPath.child("1062677569239011340").set(gameState)
+
+    const array: any[] = await
+        (await DiscordRequest({
+            endpoint: `guilds/${wwGuildId}/channels`,
+            method: HtmlMethod.GET
+        })).json();
+    for (const channel of array.filter(value => value.name.startsWith('werewolf-chat')).map(value => value.id)) {
+        console.log(channel)
+        console.log(await (await DeleteChannel(channel)).json())
+    }
+    // console.log(array.filter(value => value.name.startsWith('general')).map(value => value.id))
+    // console.log(array.filter(value => value.name.startsWith('werewolf-chat')).map(value => value.permission_overwrites))
+    // await EditPermission({
+    //     allow: PermissionFlags.ADMINISTRATOR,
+    //     channelId: "1062251357769310301",
+    //     guildId: wwGuildId,
+    //     userId: "964885356170346596",
+    // })
+    // const roles: any[] = await (await DiscordRequest({
+    //     endpoint: `guilds/${wwGuildId}/roles`,
+    //     method: HtmlMethod.GET
+    // })).json()
+    // for (const role of roles) {
+    //     try {
+    //         console.log(await DiscordRequest({
+    //             endpoint: `guilds/${wwGuildId}/roles/${role.id}`,
+    //             method: HtmlMethod.DELETE,
+    //         }))
+    //     } catch (e) {
+    //         console.log(e)
+    //     }
+    // }
+    // await DeleteChannel()
 }
