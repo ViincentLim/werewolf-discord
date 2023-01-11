@@ -16,7 +16,7 @@
 
 import {Role, TeamName} from "../game/game_role";
 
-export const seer: Role = {
+const seer: Role = {
     init(): void {},
     // playerId: "",
     name: "seer",
@@ -24,3 +24,4 @@ export const seer: Role = {
     hasWwChannelAccess: false,
     team: TeamName.villager
 }
+export default seer

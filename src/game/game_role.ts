@@ -1,9 +1,9 @@
 import {Player} from "./game";
 import * as path from "path";
 import * as fs from "fs";
-import {villager} from "../roles/villager";
+import seer from "../roles/seer";
 
-export enum RoleName {
+export const enum RoleName {
     medic = "medic",
     seer = "seer",
     villager = "villager",
@@ -12,7 +12,7 @@ export enum RoleName {
     clown = "clown",
     gunner = "gunner",
 }
-export enum TeamName {
+export const enum TeamName {
     villager = "villager",
     werewolf = "werewolf",
     solo = "solo",
@@ -80,5 +80,5 @@ function getRoleObjects() {
 const roleObjects = getRoleObjects();
 
 export function getRole(roleName: RoleName): Role {
-    return roleObjects.get(roleName) || villager
+    return roleObjects.get(roleName) || seer
 }

@@ -5,6 +5,7 @@ import {Interaction} from "../discord/interaction";
 import {beginNightPhase} from "./phases/night_phase";
 import {calculateWinCondition} from "./win_condition";
 import {SendMessage} from "../discord/discord_message";
+import {gameStatesPath} from "../firebase/firebase_setup";
 
 
 function assignRoles(players: {[key: string]: Player;}, roleAssignmentList: (string|RoleName)[]) {
@@ -61,12 +62,16 @@ export async function onGameStarted(gameState: GameState, interaction: Interacti
 }
 
 export async function onGameEnded(gameState: GameState, channelId: string) {
+    let promises: Promise<any>[] = []
     // TODO: send message on who won (maybe not because already doing that)
     // TODO: send message asking for donations or fiverr
     // remove role
     // remove guild member
     // delete channel
-    await deleteWerewolfChannel(gameState)
+    promises.push(deleteWerewolfChannel(gameState))
+    // delete db
+    promises.push(gameStatesPath.child(channelId).remove())
+    await Promise.all(promises)
 }
 
 async function sendGameStateMessage(channelId: string, gameState: GameState) {

@@ -1,6 +1,6 @@
 import {Role, TeamName} from "../game/game_role";
 
-export const villager: Role = {
+const villager: Role = {
     init(): void {},
     // playerId: "",
     name: "villager",
@@ -8,3 +8,4 @@ export const villager: Role = {
     hasWwChannelAccess: false,
     team: TeamName.villager
 }
+export default villager
