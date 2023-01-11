@@ -1,11 +1,14 @@
 import {DiscordRequest} from "../discord_request";
 import {HtmlMethod} from "../enums";
 
-export async function EditPermission({allow, deny, guildId, channelId, userId}: {allow?: number, deny?: number, guildId: string, channelId: string, userId?: string}) {
+export async function EditPermission({allow, deny, guildId, channelId, userId, roleId}: {allow?: number, deny?: number, guildId: string, channelId: string, userId?: string, roleId?: string}) {
     let id, type;
     if (userId) {
         id = userId // user id
         type = 1 // user
+    } else if (roleId) {
+        id = roleId
+        type = 0
     } else {
         id = guildId // @everyone
         type = 0 // role

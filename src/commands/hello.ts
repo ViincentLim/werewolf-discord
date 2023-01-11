@@ -1,7 +1,5 @@
 import {Command} from "../discord/command";
 
-const {InteractionResponseType} = require("discord-interactions");
-
 const HelloCommand: Command = {
     data: {
         name: 'hello',
@@ -9,10 +7,7 @@ const HelloCommand: Command = {
     },
     async execute(interaction, gameState) {
         return {
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-                content: `Hello!`,
-            },
+            content: `Hello!`,
         }
     }
 }

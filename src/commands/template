@@ -5,10 +5,7 @@ const HelloCommand: Command = {
     },
     async execute(interaction, gameState) {
         return {
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-                content: ??,
-            },
+            content: ??,
         }
     }
 }

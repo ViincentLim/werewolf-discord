@@ -14,10 +14,13 @@
 //     }
 // }
 
-import {Role} from "../game/game_role";
+import {Role, TeamName} from "../game/game_role";
 
 export const seer: Role = {
     init(): void {},
     // playerId: "",
+    name: "seer",
     description: "Every night, you can /check if a player is good, evil or unknown. You win with the villager team.",
+    hasWwChannelAccess: false,
+    team: TeamName.villager
 }

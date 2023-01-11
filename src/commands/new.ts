@@ -1,8 +1,8 @@
 import * as admin from "firebase-admin"
 import {Command} from "../discord/command";
 import {createPlayerFromUser} from "./join";
-
-const {InteractionResponseType} = require("discord-interactions");
+import {joinCommandId} from "../game/game_constants";
+import {deleteWerewolfChannel} from "../game/werewolf_channel";
 
 const NewCommand: Command = {
     data: {
@@ -12,48 +12,23 @@ const NewCommand: Command = {
     async execute(interaction, gameState) {
         const db = admin.database()
         gameState = {
+            ended: false, logs: {}, werewolves: [],
             started: false,
             events: [],
             players: {
                 [interaction.member!.user.id]: createPlayerFromUser(interaction.member!.user)
             },
             phaseCount: -1,
-            everyEvents: {night: {}, discussion: {}, voting: {}},
+            everyEvents: {night: {}, discussion: {}, voting: {}}
         }
-        // if (gameState.wwChannel) {
-        //     // TODO: delete previous werewolf channel
-        // }
+        if (gameState.wwChannel) {
+            await deleteWerewolfChannel(gameState)
+        }
         await db.ref('games').child(interaction.channel_id).set(gameState)
         return {
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-                content: `Game created. Send </join:1059832746698092694> to join.`, // todo add info about game (players, createTime, etc)
-            },
+            content: `Game created. Send </join:${joinCommandId}> to join.`, // todo add info about game (players, createTime, etc)
         }
     }
 }
 
 export default NewCommand
-// const {InteractionResponseType} = require("discord-interactions");
-//
-// const admin = require("firebase-admin");
-// const {ApplicationCommandOptionType} = require("../enums");
-//
-// module.exports = {
-//     data: {
-//         name: 'new',
-//         description: 'Creates a new game.',
-//     },
-//     async execute(interaction, gameState) {
-//         // const db = admin.database()
-//         // await db.ref('test').set(interaction.data)
-//         // // todo: create game on db with channel id
-//         return {
-//             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-//             data: {
-//                 content: `Game created. Send </join:1059832746698092694> to join.`,
-//             },
-//         }
-//     }
-// }
-// // todo: create game on db with channel id

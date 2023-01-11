@@ -78,11 +78,11 @@ export type DiscordUser = {
 
 export type InteractionResponse = {
     type: InteractionResponseType
-    data: InteractionCallback
+    data: Message
 }
 
 // todo: replace all the any types
-export type InteractionCallback = {
+export type Message = {
     tts?: boolean
     content?: string
     embeds?: any[]//array of embeds
@@ -91,3 +91,13 @@ export type InteractionCallback = {
     components?: any[]//array of components
     attachments?: any[]//array of partial attachment objects
 }
+
+// export type InteractionCallback = {
+//     tts?: boolean
+//     content?: string
+//     embeds?: any[]//array of embeds
+//     allowed_mentions?: any//allowed mentions
+//     flags?: InteractionResponseFlags//MessageFlags
+//     components?: any[]//array of components
+//     attachments?: any[]//array of partial attachment objects
+// }

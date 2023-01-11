@@ -1,4 +1,3 @@
-import {InteractionResponseType} from "discord-interactions"
 import {ApplicationCommandOptionType} from "../enums"
 import {Command} from "../discord/command";
 import {Interaction} from "../discord/interaction";
@@ -37,10 +36,7 @@ const CheckCommand: Command = {
         // // todo retrieve gameState from db
 
         return {
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-                content: `Checked!`,
-            }
+            content: `Checked!`,
         }
         // return {
         //     type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,

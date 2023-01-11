@@ -1,33 +1,23 @@
-import express from "express"
-import {Request, Response} from "express";
+import express, {Request, Response} from "express"
 // import { InteractionType, InteractionResponseType, verifyKeyMiddleware } from 'discord-interactions'
-import {InteractionType, verifyKeyMiddleware} from 'discord-interactions'
+import {InteractionResponseType, InteractionType, verifyKeyMiddleware} from 'discord-interactions'
 import * as path from "path"
 import * as fs from "fs"
 import {Command} from "./discord/command";
 import {GameState} from "./game/game";
 // import {Database} from "firebase-admin/lib/database";
 import * as dotenv from "dotenv"
-import * as admin from "firebase-admin"
-import {database} from "firebase-admin";
-import Database = database.Database;
-import {Interaction} from "./discord/interaction";
+import {Interaction, InteractionResponse} from "./discord/interaction";
+import e from "express";
+import {wwGuildId} from "./game/game_constants";
+import {gameStatesPath, wwChannelPath} from "./firebase/firebase_setup";
 
 const app = express();
-
 dotenv.config();
-
-admin.initializeApp({
-    credential: admin.credential.cert(JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT || "")),
-    // credential: applicationDefault(),
-    databaseURL: "https://were-wolves-default-rtdb.firebaseio.com"
-});
 
 // app.get('/', (req, res) => {
 //
 // });
-const db : Database = admin.database()
-// const gameStates: {[key: string]: GameState} = {}
 const gameStates: {[key: string]: GameState} = {}
 
 function getCommands() {
@@ -49,31 +39,49 @@ function getCommands() {
 }
 
 const commands = getCommands();
-console.log(commands.keys())
-console.log("hello?")
 
-const gameStatesPath = db.ref('games');
-app.post('/interactions', verifyKeyMiddleware(process.env['werewolf-discord_public-key'] || ""), async (req: Request, res: Response) => {
-    const interaction: Interaction = req.body;
-    const { data, channel_id } = interaction;
-    // const channelId = interaction.channel_id;
-    const commandName = data?.name;
+async function handleAppCommand(interaction: Interaction, res: e.Response<any, Record<string, any>>) {
+    const commandName = interaction.data?.name;
 
-    if (!gameStates[channel_id]) {
-        gameStates[channel_id] = (await gameStatesPath.child(channel_id).get()).val()
+    let gameState: GameState;
+    if (interaction.guild_id === wwGuildId) {
+        const wwChannel = interaction.channel_id;
+        interaction.channel_id = (await wwChannelPath.child(wwChannel).get()).val()
+    }
+    if (!gameStates[interaction.channel_id]) {
+        gameStates[interaction.channel_id] = (await gameStatesPath.child(interaction.channel_id).get()).val()
     }
     // TODO: deal with dm vs channel commands (user vs member in interaction)
+    gameState = gameStates[interaction.channel_id];
+
+
+    let reply: InteractionResponse
     // Handle different slash commands
-    const gameState = gameStates[channel_id];
     if (!gameState) {
+        reply = {
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+                content: "Please use </new:1060219085834702959> to create a new game."
+            }
+        };
         // only allow "/new", else return and ask user to create new game first
+    } else {
+        reply = {
+            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: (await commands.get(commandName)?.execute(interaction, gameState)) || {}
+        }
+        await gameStatesPath.child(interaction.channel_id).set(gameState)// or dont await
     }
+    res.send(reply)
+}
+app.post('/interactions', verifyKeyMiddleware(process.env['werewolf-discord_public-key'] || ""), async (req: Request, res: Response) => {
+    const interaction: Interaction = req.body;
+
+    // const channelId = interaction.channel_id;
     switch (interaction.type) {
         case InteractionType.APPLICATION_COMMAND:
         case InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE:
-            const reply = await commands.get(commandName)?.execute(interaction, gameState);
-            await gameStatesPath.child(channel_id).set(gameState)// or dont await
-            res.send(reply)
+            await handleAppCommand(interaction, res);
             break
         case InteractionType.MESSAGE_COMPONENT:
             // todo: for dropdown and checkboxes

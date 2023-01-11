@@ -1,7 +1,6 @@
 import {DiscordUser} from "../discord/interaction";
 import {Player} from "../game/game";
 import {Command} from "../discord/command";
-import {InteractionResponseType} from "discord-interactions";
 
 export function createPlayerFromUser(user: DiscordUser) : Player {
     return {
@@ -23,11 +22,11 @@ const JoinCommand: Command = {
         const player = createPlayerFromUser(user);
         gameState.players[user.id] = player
         // todo edit original newGame message to add this player in??
+        // SendMessage(interaction.channel_id, {
+        //     content: ""
+        // })
         return {
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-                content: `${player.name} just joined the game!`,
-            },
+            content: `${player.name} just joined the game!`,
         }
     }
 }

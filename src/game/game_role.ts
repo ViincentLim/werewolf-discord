@@ -1,5 +1,7 @@
-import {seer} from "../roles/seer";
-import {GameState} from "./game";
+import {Player} from "./game";
+import * as path from "path";
+import * as fs from "fs";
+import {villager} from "../roles/villager";
 
 export enum RoleName {
     medic = "medic",
@@ -9,6 +11,11 @@ export enum RoleName {
     serial_killer = "serial killer",
     clown = "clown",
     gunner = "gunner",
+}
+export enum TeamName {
+    villager = "villager",
+    werewolf = "werewolf",
+    solo = "solo",
 }
 
 // export const RoleDescription: {[key: string]: string;} = {
@@ -28,7 +35,7 @@ export const roleTypeToRoles: {[index: string]:RoleName[]} = {
     // others: [RoleName.shapeshifter],
 }
 
-export const roleAssignmentList = [
+export const defaultRoleAssignmentList = [
     'infoVillagers',//1
     'werewolves',//2
     'protectiveVillagers',//3
@@ -48,17 +55,30 @@ export const roleAssignmentList = [
 ]
 
 export type Role = {
-    // playerId: string
-    init: (playerId: string, gameState: GameState) => void
+    name: string
     description: string
+    team: TeamName;
+    // init: (playerId: string, gameState: GameState) => void
+    // Set Player.status (eg how many potions, how many lives, hh target)
+    init: (player: Player) => void
+    hasWwChannelAccess: boolean
 }
-export function getRole(role: RoleName): Role {
-    // todo: consider filename method, dynamic import
-    switch (role) {
-        case RoleName.seer:
-            return seer
-        default:
-            // TODO: temporary
-            return seer
+
+
+function getRoleObjects() {
+    const roleObjects: Map<string, Role> = new Map()
+    const rolesPath = path.join(__dirname, './../roles')
+    const roleFiles = fs.readdirSync(rolesPath).filter(file => file.endsWith('.js'));
+    for (const file of roleFiles) {
+        const filePath = path.join(rolesPath, file);
+        const role: Role = require(filePath).default
+        roleObjects.set(role.name, role)
     }
+    return roleObjects;
+}
+
+const roleObjects = getRoleObjects();
+
+export function getRole(roleName: RoleName): Role {
+    return roleObjects.get(roleName) || villager
 }
