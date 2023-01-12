@@ -1,26 +1,21 @@
-import {GameState, Phase} from "../game";
+import {GameState} from "../game";
 import {mergeObjectsWithArrayAsValue} from "../../utility/helper_functions";
-import {actionComparatorLess, Attack, Protect} from "../phase_events";
-import {sleep} from "../../utility/promises";
+import {actionComparatorLess, Attack, PhaseEvents, Protect} from "../phase_events";
+import {sleepTill} from "../../utility/promises";
 import {SendMessage} from "../../discord/discord_message";
 import {EditPermission} from "../../discord/manage_permission";
 import {PermissionFlags} from "../../enums";
 import {wwGuildId} from "../game_constants";
-import {newPhase, onPhaseEnded} from "../game_manager";
+import {addLog, onPhaseEnd, onPhaseStart} from "../game_manager";
+import {beginDiscussionPhase} from "./discussion_phase";
 
 const nightLengthSeconds = 30;
 
-function addLog(gameState: GameState, log: string) {
-    if (!gameState.logs[gameState.phaseCount]) {
-        gameState.logs[gameState.phaseCount] = []
-    }
-    gameState.logs[gameState.phaseCount].push(log)
-}
-
 export async function beginNightPhase(gameState: GameState, channelId: string) {
-    gameState.phase = newPhase(Phase.night);
+    onPhaseStart(gameState, nightLengthSeconds);
+    const phaseEndTimestamp = gameState.phase![1];
     SendMessage(channelId, {
-        content: `Night phase ends ${Math.round(gameState.phase[1] / 1000 + nightLengthSeconds)}`
+        content: `Night phase ends <t:${Math.round(phaseEndTimestamp / 1000 + nightLengthSeconds)}:R>`
     })
     // allow permission for ww to send msg on wwChannel
     await EditPermission({
@@ -30,7 +25,7 @@ export async function beginNightPhase(gameState: GameState, channelId: string) {
         channelId: gameState.wwChannel!,
     })
     // timer
-    await sleep(nightLengthSeconds*1000)
+    await sleepTill(phaseEndTimestamp)
     // deny permission for ww to send msg on wwChannel
     await EditPermission({
         allow: PermissionFlags.VIEW_CHANNEL,
@@ -41,8 +36,8 @@ export async function beginNightPhase(gameState: GameState, channelId: string) {
     })
     // when timer over, check actions
     // gameState.attacks = []
-    const everyNightEvents = gameState.everyEvents.night
-    const thisNightEvents = gameState.events[gameState.phaseCount/3]
+    const everyNightEvents: PhaseEvents = gameState.everyEvents?.night || {}
+    const thisNightEvents: PhaseEvents = gameState.events?.[gameState.phaseCount/3] || {}
     const allAttacks = (mergeObjectsWithArrayAsValue(everyNightEvents.attacks || {}, thisNightEvents.attacks || {}) as { [key: string]: Attack[] });
     const allProtects = (mergeObjectsWithArrayAsValue(everyNightEvents.protects || {}, thisNightEvents.protects || {}) as { [key: string]: Protect[] });
     for (const [to, attacks] of Object.entries(allAttacks)) {
@@ -80,8 +75,8 @@ export async function beginNightPhase(gameState: GameState, channelId: string) {
         }
     }
 
-    await onPhaseEnded(gameState, channelId);
+    await onPhaseEnd(gameState, channelId);
     if (!gameState.ended) {
-        // TODO beginDiscussion()
+        beginDiscussionPhase(gameState, channelId)
     }
 }

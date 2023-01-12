@@ -32,7 +32,7 @@ export type InteractionData = {
 export type ApplicationCommandInteractionDataOption = {
     name: string
     type: ApplicationCommandOptionType
-    value?: string|number
+    value?: string|number|boolean
     options?: ApplicationCommandInteractionDataOption[]
     focused?: boolean
 }

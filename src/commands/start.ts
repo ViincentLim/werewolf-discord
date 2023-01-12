@@ -6,7 +6,7 @@ import {
 } from "../game/game";
 import {Command} from "../discord/command";
 import {roleCommandId} from "../game/game_constants";
-import {onGameStarted} from "../game/game_manager";
+import {onGameStart} from "../game/game_manager";
 
 const StartCommand: Command = {
     data: {
@@ -31,7 +31,7 @@ const StartCommand: Command = {
                 content: 'Game has already started.'
             }
         }
-        await onGameStarted(gameState, interaction);
+        await onGameStart(gameState, interaction);
         return {
             content: `Game started. Send </role:${roleCommandId}> to get your role`,
         }

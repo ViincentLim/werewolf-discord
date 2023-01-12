@@ -1,7 +1,7 @@
 import {Player} from "./game";
 import * as path from "path";
 import * as fs from "fs";
-import seer from "../roles/seer";
+import villager from "../roles/villager";
 
 export const enum RoleName {
     medic = "medic",
@@ -15,7 +15,9 @@ export const enum RoleName {
 export const enum TeamName {
     villager = "villager",
     werewolf = "werewolf",
-    solo = "solo",
+    // solo = "solo",
+    soloKiller = "soloKiller",
+    soloVoter = "soloVoter",
 }
 
 // export const RoleDescription: {[key: string]: string;} = {
@@ -54,10 +56,11 @@ export const defaultRoleAssignmentList = [
     'killingVillagers',
 ]
 
-export type Role = {
-    name: string
+// TODO: change to OOP?
+export interface Role {
+    name: RoleName
     description: string
-    team: TeamName;
+    team: TeamName
     // init: (playerId: string, gameState: GameState) => void
     // Set Player.status (eg how many potions, how many lives, hh target)
     init: (player: Player) => void
@@ -66,7 +69,7 @@ export type Role = {
 
 
 function getRoleObjects() {
-    const roleObjects: Map<string, Role> = new Map()
+    const roleObjects: Map<RoleName, Role> = new Map()
     const rolesPath = path.join(__dirname, './../roles')
     const roleFiles = fs.readdirSync(rolesPath).filter(file => file.endsWith('.js'));
     for (const file of roleFiles) {
@@ -80,5 +83,5 @@ function getRoleObjects() {
 const roleObjects = getRoleObjects();
 
 export function getRole(roleName: RoleName): Role {
-    return roleObjects.get(roleName) || seer
+    return roleObjects.get(roleName) || villager
 }

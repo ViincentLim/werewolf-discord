@@ -5,9 +5,12 @@ export const minPlayers = 6;
 export const maxPlayers = 20;
 
 export type GameState = {
+    votesCount?: {[key: string]: number}
+    votersChoice?: {[key: string]: string}
+    votingMessage?: string
     started: boolean
     ended: boolean
-    logs: {[key: number]: string[]}
+    logs?: {[key: number]: string[]}
     winner?: TeamName|string
     phaseCount: number // -1 when not started
     players: {[key: string]: Player;}//Map<string, Player> //player => roles
@@ -16,21 +19,25 @@ export type GameState = {
     // roles: Map<string, string|undefined>//player => roles
     phase?: [Phase, number],
     // events: { [key: string]: PhaseEvents;  everyNight: PhaseEvents, everyDiscussion: PhaseEvents, everyVoting: PhaseEvents}
-    events: PhaseEvents[] // [night1, discuss1, vote1, night2, discuss2...]
-    everyEvents: { night: PhaseEvents, discussion: PhaseEvents, voting: PhaseEvents }
+    events?: PhaseEvents[] // [night1, discuss1, vote1, night2, discuss2...]
+    everyEvents?: { night: PhaseEvents, discussion: PhaseEvents, voting: PhaseEvents }
     wwChannel?: string
     wwInvite?: string
     wwGuildRole?: string
-    werewolves: string[]
+    werewolves?: string[]
     // phases: {everyNight: {}, everyDiscussion: {}, everyVoting: {}}
 }
 
 export type Player = {
     name: string
     role?: RoleName
-    killed?: string
+    killed?: string|ReasonOfDeath
     revealed?: boolean
     status?: {[key: string]: any} // to track e.g. how many potions witch has left, how many lives bg has left
+}
+
+export const enum ReasonOfDeath {
+    voted = "voted"
 }
 
 export const enum Phase {

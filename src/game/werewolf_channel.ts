@@ -27,7 +27,7 @@ export async function createWerewolfChannel(gameChannelId: string, gameState: Ga
         resolve()
     }))
     await createWerewolfGuildRole(gameState)
-    await addUsersToWerewolfGuild(gameState, gameState.werewolves)
+    await addUsersToWerewolfGuild(gameState, gameState.werewolves || [])
     await Promise.all(promises)
 }
 
@@ -83,7 +83,7 @@ async function removeUsersFromWerewolfGuild(gameState: GameState, users: string[
 export async function deleteWerewolfChannel(gameState: GameState) {
     const allDeletePromises: Promise<any>[] = []
     allDeletePromises.push(deleteWerewolfGuildRole(gameState))
-    allDeletePromises.push(removeUsersFromWerewolfGuild(gameState, gameState.werewolves))
+    allDeletePromises.push(removeUsersFromWerewolfGuild(gameState, gameState.werewolves || []))
     allDeletePromises.push(DiscordRequest({endpoint: `invites/${gameState.wwInvite}`, method: HtmlMethod.DELETE}))
     await Promise.all(allDeletePromises)
     return await DeleteChannel(gameState.wwChannel||"")

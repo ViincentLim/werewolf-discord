@@ -1,14 +1,14 @@
-import fetch from "node-fetch"
+import fetch, {Response} from "node-fetch"
 import {HtmlMethod} from "./enums";
 
-export async function DiscordRequest({endpoint, body, method}: { endpoint: string, body?: any, method: HtmlMethod }) {
+export async function DiscordRequest({endpoint, body, method}: { endpoint: string, body?: any, method: HtmlMethod }): Promise<Response> {
     // append endpoint to root API URL
     const url = 'https://discord.com/api/v10/' + endpoint;
     const options: any = {method: method}
     // Stringify payloads
     if (body) options.body = JSON.stringify(body);
     // Use node-fetch to make requests
-    const res = await fetch(url, {
+    const res: Response = await fetch(url, {
         headers: {
             'Authorization': `Bot ${process.env['werewolf-discord_token']}`,
             'Content-Type': 'application/json; charset=UTF-8',

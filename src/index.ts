@@ -19,8 +19,7 @@ setUpExtensions()
 // app.get('/', (req, res) => {
 //
 // });
-const gameStates: {[key: string]: GameState} = {}
-// TODO. continue night phase, discussion phase etc
+const gameStates: {[key: string]: GameState} = (await gameStatesPath.get()).val()
 function getCommands() {
     const commands: Map<string, Command> = new Map()
     const commandsPath = path.join(__dirname, 'commands');
