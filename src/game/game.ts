@@ -31,6 +31,7 @@ export type GameState = {
 export type Player = {
     name: string
     role?: RoleName
+    fakeRole?: RoleName // eg. "seer" for fool seer, maybe amnesiac?
     killed?: string|ReasonOfDeath
     revealed?: boolean
     status?: {[key: string]: any} // to track e.g. how many potions witch has left, how many lives bg has left

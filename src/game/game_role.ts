@@ -1,7 +1,20 @@
-import {Player} from "./game";
+import {GameState, Player} from "./game";
 import * as path from "path";
 import * as fs from "fs";
 import villager from "../roles/villager";
+
+// TODO: change to OOP?
+export interface Role {
+    name: RoleName
+    description: string
+    team: TeamName
+    aura: Aura
+    // init: (playerId: string, gameState: GameState) => void
+    // Set Player.status (eg how many potions, how many lives, hh target)
+    init: (player: Player) => void
+    hasWwChannelAccess?: boolean
+    check?: (gameState: GameState, id: string, params: any) => string
+}
 
 export const enum RoleName {
     medic = "medic",
@@ -56,15 +69,10 @@ export const defaultRoleAssignmentList = [
     'killingVillagers',
 ]
 
-// TODO: change to OOP?
-export interface Role {
-    name: RoleName
-    description: string
-    team: TeamName
-    // init: (playerId: string, gameState: GameState) => void
-    // Set Player.status (eg how many potions, how many lives, hh target)
-    init: (player: Player) => void
-    hasWwChannelAccess: boolean
+export const enum Aura {
+    good,
+    bad,
+    unknown,
 }
 
 

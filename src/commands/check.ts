@@ -2,6 +2,8 @@ import {ApplicationCommandOptionType} from "../enums"
 import {Command} from "../discord/command";
 import {Interaction} from "../discord/interaction";
 import {GameState} from "../game/game";
+import {getRole, RoleName} from "../game/game_role";
+import {InteractionResponseFlags} from "discord-interactions";
 
 const CheckCommand: Command = {
     data: {
@@ -32,11 +34,31 @@ const CheckCommand: Command = {
         // from phaseEvents, call onChecks
         // if no onChecks, reply getAura(role)
         //  */
+        const userId = interaction.member?.user.id;
+        if (!userId || !gameState.players[userId]) {
+            return {
+                content: `You did not join the game.`,
+                flags: InteractionResponseFlags.EPHEMERAL,
+            }
+        }
+        const roleName: RoleName|undefined = gameState.players[userId || ""].role
+        if (!roleName) {
+            return {
+                content: `You do not have a role yet.`,
+                flags: InteractionResponseFlags.EPHEMERAL,
+            }
+        }
+
         // // todo retrieve players from uid
         // // todo retrieve gameState from db
+        let params: {[key: string]: any} = {}
+        for (const option of interaction.data.options?.values() || []) {
+            params[option.name] = option.value
+        }
 
         return {
-            content: `Checked!`,
+            content: getRole(roleName).check?.(gameState, userId, params) || "You cannot use this command.",
+            flags: InteractionResponseFlags.EPHEMERAL
         }
         // return {
         //     type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,

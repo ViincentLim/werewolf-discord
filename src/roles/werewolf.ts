@@ -1,4 +1,4 @@
-import {Role, RoleName, TeamName} from "../game/game_role";
+import {Aura, Role, RoleName, TeamName} from "../game/game_role";
 
 const werewolf: Role = {
     init(): void {},
@@ -6,6 +6,7 @@ const werewolf: Role = {
     name: RoleName.werewolf,
     description: "Every night, you can discuss on the werewolf channel and vote a player to kill. You win with the werewolf team.",
     hasWwChannelAccess: true,
-    team: TeamName.werewolf
+    team: TeamName.werewolf,
+    aura: Aura.bad,
 }
 export default werewolf
