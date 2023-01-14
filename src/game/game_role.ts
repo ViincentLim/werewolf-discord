@@ -14,6 +14,7 @@ export interface Role {
     init: (player: Player) => void
     hasWwChannelAccess?: boolean
     check?: (gameState: GameState, id: string, params: any) => string
+    protect?: (gameState: GameState, id: string, params: any) => string
 }
 
 export const enum RoleName {

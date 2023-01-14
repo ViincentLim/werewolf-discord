@@ -5,7 +5,7 @@
 
 // import {DiscordRequest} from "./discord_request";
 // import {HtmlMethod, PermissionFlags} from "./enums";
-import {DiscordRequest} from "./discord_request";
+import {DiscordRequest} from "./discord/discord_request";
 import {wwGuildId} from "./game/game_constants";
 import {HtmlMethod} from "./enums";
 import {DeleteChannel} from "./discord/discord_channel";

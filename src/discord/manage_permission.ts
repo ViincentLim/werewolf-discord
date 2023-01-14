@@ -1,4 +1,4 @@
-import {DiscordRequest} from "../discord_request";
+import {DiscordRequest} from "./discord_request";
 import {HtmlMethod} from "../enums";
 
 export async function EditPermission({allow, deny, guildId, channelId, userId, roleId}: {allow?: number, deny?: number, guildId: string, channelId: string, userId?: string, roleId?: string}) {

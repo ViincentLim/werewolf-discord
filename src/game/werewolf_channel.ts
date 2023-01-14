@@ -3,7 +3,7 @@ import {CreateChannel, DeleteChannel} from "../discord/discord_channel";
 import {wwGuildId} from "./game_constants";
 import {ChannelType, HtmlMethod, PermissionFlags} from "../enums";
 import {CreateDiscordInvite} from "../discord/discord_invite";
-import {DiscordRequest} from "../discord_request";
+import {DiscordRequest} from "../discord/discord_request";
 import {wwChannelPath} from "../firebase/firebase_setup";
 
 export async function createWerewolfChannel(gameChannelId: string, gameState: GameState) {

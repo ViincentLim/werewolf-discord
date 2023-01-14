@@ -1,4 +1,4 @@
-import {DiscordRequest} from "./discord_request"
+import {DiscordRequest} from "./discord/discord_request"
 // const {DiscordRequest} = require("./discord_request")
 const path = require("path");
 const fs = require("fs");

@@ -45,10 +45,12 @@ export interface Appear extends Action {
     // type: AppearType,
     as: RoleName
 }
+// todo, check if export const enum or export enum better
 export enum AttackType {
     werewolf,
     solo,
 }
+export const allAttackTypes = [AttackType.werewolf, AttackType.solo]
 
 export enum ProtectType {
     medic,

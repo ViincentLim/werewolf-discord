@@ -24,16 +24,18 @@ const RoleCommand: Command = {
                 flags: InteractionResponseFlags.EPHEMERAL
             }
         }
-        if (!player.role) {
+        // For fool seer or amnesiac?
+        const roleName = player.fakeRole || player.role;
+        if (!roleName) {
             return {
                 content: `You do not have a role.`,
                 flags: InteractionResponseFlags.EPHEMERAL
             }
         }
 
-        const role = getRole(player.role);
-        let content = `Your role is ${player.role}.\n\n${role.description}\n\nTeam: ${role.team}\n\n`;
-        if (getRole(player.role).hasWwChannelAccess) {
+        const role = getRole(roleName);
+        let content = `Your role is ${roleName}.\n\n${role.description}\n\nTeam: ${role.team}\n\n`;
+        if (getRole(roleName).hasWwChannelAccess) {
             content += `Join the werewolves channel: https://discord.gg/${gameState.wwInvite}\n\n`
         }
         return {

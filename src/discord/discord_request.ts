@@ -1,5 +1,5 @@
 import fetch, {Response} from "node-fetch"
-import {HtmlMethod} from "./enums";
+import {HtmlMethod} from "../enums";
 
 export async function DiscordRequest({endpoint, body, method}: { endpoint: string, body?: any, method: HtmlMethod }): Promise<Response> {
     // append endpoint to root API URL

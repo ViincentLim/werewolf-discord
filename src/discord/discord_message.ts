@@ -1,4 +1,4 @@
-import {DiscordRequest} from "../discord_request";
+import {DiscordRequest} from "./discord_request";
 import {HtmlMethod} from "../enums";
 import {Message} from "./interaction";
 import {Response} from "node-fetch";

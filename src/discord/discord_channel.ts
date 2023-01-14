@@ -1,4 +1,4 @@
-import {DiscordRequest} from "../discord_request";
+import {DiscordRequest} from "./discord_request";
 import {ChannelType, HtmlMethod} from "../enums";
 
 export async function CreateChannel(guildId: string, channel: {name: string, type: ChannelType, topic: string, permission_overwrites: {}[]}) {

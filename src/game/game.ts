@@ -19,7 +19,7 @@ export type GameState = {
     // roles: Map<string, string|undefined>//player => roles
     phase?: [Phase, number],
     // events: { [key: string]: PhaseEvents;  everyNight: PhaseEvents, everyDiscussion: PhaseEvents, everyVoting: PhaseEvents}
-    events?: PhaseEvents[] // [night1, discuss1, vote1, night2, discuss2...]
+    events?: {[key: number]: PhaseEvents} // [night1, discuss1, vote1, night2, discuss2...]
     everyEvents?: { night: PhaseEvents, discussion: PhaseEvents, voting: PhaseEvents }
     wwChannel?: string
     wwInvite?: string
