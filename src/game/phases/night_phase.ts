@@ -24,6 +24,36 @@ export async function beginNightPhase(gameState: GameState, channelId: string) {
         guildId: wwGuildId,
         channelId: gameState.wwChannel!,
     })
+    const werewolfVoteOptions: SelectOption[] = []
+    for (const [aliveNonWerewolfId, aliveNonWerewolfPlayer] of Object.entries(gameState.players).filter(([id, player]) => !player.killed && !(gameState.werewolves || []).includes(id))) {
+        werewolfVoteOptions.push({
+            label: aliveNonWerewolfPlayer,
+            value: aliveNonWerewolfId
+        })
+    }
+    // TODO: extract message to edit when vote changes
+    SendMessage(gameState.wwChannel || "", {
+        content: "Vote for a player to kill tonight.",
+        components: [
+            {
+                components: [
+                    {
+                        custom_id: `werewolf_vote_${gameState.wwChannel}`,
+                        max_values: 1,
+                        min_values: 1,
+                        options: [
+                            werewolfVoteOptions
+                        ],
+                        placeholder: "Choose a player to kill.",
+                        type: 3
+                    }
+                ],
+                type: 1
+            }
+        ]
+    }).then(async r => {
+        gameState.wwVotingMessage = (await r.json()).id;
+    })
     // timer
     await sleepTill(phaseEndTimestamp)
     // deny permission for ww to send msg on wwChannel

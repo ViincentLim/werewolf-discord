@@ -19,7 +19,14 @@ setUpExtensions()
 // app.get('/', (req, res) => {
 //
 // });
-const gameStates: {[key: string]: GameState} = (await gameStatesPath.get()).val()
+const gameStatesPromise = new Promise<{[key: string]: GameState}>(async (resolve, reject) => {
+    try {
+        let gameStates = (await gameStatesPath.get()).val()
+        resolve(gameStates)
+    } catch (e) {
+        reject(e)
+    }
+})
 function getCommands() {
     const commands: Map<string, Command> = new Map()
     const commandsPath = path.join(__dirname, 'commands');
@@ -48,11 +55,11 @@ async function handleAppCommand(interaction: Interaction, res: e.Response<any, R
         const wwChannel = interaction.channel_id;
         interaction.channel_id = (await wwChannelPath.child(wwChannel).get()).val()
     }
-    if (!gameStates[interaction.channel_id]) {
-        gameStates[interaction.channel_id] = (await gameStatesPath.child(interaction.channel_id).get()).val()
+    if (!(await gameStatesPromise)[interaction.channel_id]) {
+        (await gameStatesPromise)[interaction.channel_id] = (await gameStatesPath.child(interaction.channel_id).get()).val()
     }
     // TODO: deal with dm vs channel commands (user vs member in interaction)
-    gameState = gameStates[interaction.channel_id];
+    gameState = (await gameStatesPromise)[interaction.channel_id];
 
 
     let reply: InteractionResponse

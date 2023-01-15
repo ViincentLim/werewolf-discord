@@ -3,6 +3,7 @@ import {sleepTill} from "../../utility/promises";
 import {addLog, onPhaseEnd, onPhaseStart} from "../game_manager";
 import {beginNightPhase} from "./night_phase";
 import {SendMessage} from "../../discord/discord_message";
+import {joinCommandId} from "../game_constants";
 
 const votingLengthSeconds = 30;
 
@@ -22,7 +23,7 @@ export async function beginVotingPhase(gameState: GameState, channelId: string) 
         return `${player.name}${player.revealed ? ` (${player.role})` : ""} ---**${gameState.votesCount![id] || "0"}**`
     }).join('\n');
     gameState.votingMessage = (await (await SendMessage(channelId, {
-        content: `Send "/vote @playerId" to vote.\n**Players:**\n\n`+ playersInfoString
+        content: `Send "</vote:${voteCommandId}> @playerId" to vote.\n**Players:**\n\n`+ playersInfoString
     })).json()).id
     // TODO actions like gunner shoot?
     await sleepTill(phaseEndTimestamp)

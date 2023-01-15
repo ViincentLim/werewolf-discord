@@ -8,6 +8,7 @@ export type GameState = {
     votesCount?: {[key: string]: number}
     votersChoice?: {[key: string]: string}
     votingMessage?: string
+    wwVotingMessage?: string
     started: boolean
     ended: boolean
     logs?: {[key: number]: string[]}

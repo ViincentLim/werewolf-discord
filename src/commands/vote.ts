@@ -76,6 +76,8 @@ const VoteCommand: Command = {
         gameState.votersChoice[voterId] = votedId
         gameState.votesCount[votedId]++ // todo change to += role.getVote(id, gameState) so that: mayor, voteless character can be accounted
 
+        // todo edit voting message
+
         return {
             content: `${voterPlayer?.name} voted for ${votedPlayer.name}`,
         }
