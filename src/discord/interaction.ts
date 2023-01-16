@@ -92,6 +92,20 @@ export type Message = {
     attachments?: any[]//array of partial attachment objects
 }
 
+export type SelectOption = {
+    label: string
+    value: string
+    description?: string
+    emoji?: DiscordEmoji
+    default?: boolean
+}
+
+export type DiscordEmoji = {
+    id: string
+    name: string
+    animated: boolean
+}
+
 // export type InteractionCallback = {
 //     tts?: boolean
 //     content?: string

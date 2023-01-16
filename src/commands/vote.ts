@@ -1,6 +1,9 @@
 import {Command} from "../discord/command";
 import {InteractionResponseFlags} from "discord-interactions";
 import {Phase} from "../game/game";
+import {EditMessage} from "../discord/discord_message";
+import {getVotingMessage} from "../game/game_messages";
+import {getAlivePlayers} from "../game/game_players";
 
 
 const VoteCommand: Command = {
@@ -76,7 +79,7 @@ const VoteCommand: Command = {
         gameState.votersChoice[voterId] = votedId
         gameState.votesCount[votedId]++ // todo change to += role.getVote(id, gameState) so that: mayor, voteless character can be accounted
 
-        // todo edit voting message
+        EditMessage(interaction.channel_id, gameState.votingMessage || "", getVotingMessage(gameState, getAlivePlayers(gameState)))
 
         return {
             content: `${voterPlayer?.name} voted for ${votedPlayer.name}`,

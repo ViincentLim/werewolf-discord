@@ -10,3 +10,11 @@ export async function SendMessage(channelId: string, message: Message): Promise<
         body: message,
     })
 }
+
+export async function EditMessage(channelId: string, messageId: string, message: Message): Promise<Response> {
+    return await DiscordRequest({
+        endpoint: `channels/${channelId}/messages/${messageId}`,
+        method: HtmlMethod.PATCH,
+        body: message,
+    })
+}

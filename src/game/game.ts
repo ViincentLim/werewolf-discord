@@ -7,6 +7,8 @@ export const maxPlayers = 20;
 export type GameState = {
     votesCount?: {[key: string]: number}
     votersChoice?: {[key: string]: string}
+    wwVotesCount?: {[key: string]: number}
+    wwVotersChoice?: {[key: string]: string}
     votingMessage?: string
     wwVotingMessage?: string
     started: boolean

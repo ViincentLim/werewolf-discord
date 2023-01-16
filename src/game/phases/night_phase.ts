@@ -1,6 +1,6 @@
 import {GameState} from "../game";
 import {mergeObjectsWithArrayAsValue} from "../../utility/helper_functions";
-import {actionComparatorLess, Attack, PhaseEvents, Protect} from "../phase_events";
+import {actionComparatorLess, Attack, AttackType, PhaseEvents, Protect} from "../phase_events";
 import {sleepTill} from "../../utility/promises";
 import {SendMessage} from "../../discord/discord_message";
 import {EditPermission} from "../../discord/manage_permission";
@@ -8,8 +8,43 @@ import {PermissionFlags} from "../../enums";
 import {wwGuildId} from "../game_constants";
 import {addLog, onPhaseEnd, onPhaseStart} from "../game_manager";
 import {beginDiscussionPhase} from "./discussion_phase";
+import {SelectOption} from "../../discord/interaction";
+import {RoleName} from "../game_role";
 
 const nightLengthSeconds = 30;
+
+function attackWerewolfVictim(gameState: GameState) {
+    let maxVotes = 0
+    let votedPlayers: string[] = []
+    for (const [id, votes] of Object.entries(gameState.wwVotesCount!)) {
+        if (votes > maxVotes) {
+            votedPlayers = []
+            maxVotes = votes
+        } else if (votes === maxVotes) {
+            votedPlayers.push(id)
+        }
+    }
+    if (votedPlayers.length !== 1) {
+        return
+    }
+    const werewolfVictim = votedPlayers[0]
+    if (!gameState.events) {
+        gameState.events = {}
+    }
+    if (!gameState.events[gameState.phaseCount]) {
+        gameState.events[gameState.phaseCount] = {}
+    }
+    if (!gameState.events[gameState.phaseCount].attacks) {
+        gameState.events[gameState.phaseCount].attacks = {}
+    }
+    if (!gameState.events[gameState.phaseCount].attacks![werewolfVictim]) {
+        gameState.events[gameState.phaseCount].attacks![werewolfVictim] = []
+    }
+    gameState.events[gameState.phaseCount].attacks![werewolfVictim].push({
+        type: AttackType.werewolf,
+        from: RoleName.werewolf
+    })
+}
 
 export async function beginNightPhase(gameState: GameState, channelId: string) {
     onPhaseStart(gameState, nightLengthSeconds);
@@ -27,13 +62,15 @@ export async function beginNightPhase(gameState: GameState, channelId: string) {
     const werewolfVoteOptions: SelectOption[] = []
     for (const [aliveNonWerewolfId, aliveNonWerewolfPlayer] of Object.entries(gameState.players).filter(([id, player]) => !player.killed && !(gameState.werewolves || []).includes(id))) {
         werewolfVoteOptions.push({
-            label: aliveNonWerewolfPlayer,
+            label: aliveNonWerewolfPlayer.name,
             value: aliveNonWerewolfId
         })
     }
-    // TODO: extract message to edit when vote changes
+
+    gameState.wwVotesCount = {}
+    gameState.wwVotersChoice = {}
     SendMessage(gameState.wwChannel || "", {
-        content: "Vote for a player to kill tonight.",
+        content: "Vote for a player to kill tonight."+"\nVotes:\n\n"+werewolfVoteOptions.map(option => `${option.label} ---**${gameState.wwVotesCount![option.value]}**`).join("\n"),
         components: [
             {
                 components: [
@@ -64,10 +101,14 @@ export async function beginNightPhase(gameState: GameState, channelId: string) {
         guildId: wwGuildId,
         channelId: gameState.wwChannel!,
     })
+    // attack werewolf vote
+    attackWerewolfVictim(gameState);
+
+
     // when timer over, check actions
     // gameState.attacks = []
     const everyNightEvents: PhaseEvents = gameState.everyEvents?.night || {}
-    const thisNightEvents: PhaseEvents = gameState.events?.[gameState.phaseCount/3] || {}
+    const thisNightEvents: PhaseEvents = gameState.events?.[gameState.phaseCount] || {}
     const allAttacks = (mergeObjectsWithArrayAsValue(everyNightEvents.attacks || {}, thisNightEvents.attacks || {}) as { [key: string]: Attack[] });
     const allProtects = (mergeObjectsWithArrayAsValue(everyNightEvents.protects || {}, thisNightEvents.protects || {}) as { [key: string]: Protect[] });
     for (const [to, attacks] of Object.entries(allAttacks)) {

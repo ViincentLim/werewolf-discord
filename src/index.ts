@@ -61,17 +61,16 @@ async function handleAppCommand(interaction: Interaction, res: e.Response<any, R
     // TODO: deal with dm vs channel commands (user vs member in interaction)
     gameState = (await gameStatesPromise)[interaction.channel_id];
 
-
     let reply: InteractionResponse
     // Handle different slash commands
     if (!gameState && commandName !== NewCommand.data.name) {
+        // only allow "/new", else return and ask user to create new game first
         reply = {
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: {
                 content: `Please use </new:${newCommandId}> to create a new game.`
             }
         };
-        // only allow "/new", else return and ask user to create new game first
     } else {
         reply = {
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,

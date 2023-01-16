@@ -3,7 +3,8 @@ import {sleepTill} from "../../utility/promises";
 import {addLog, onPhaseEnd, onPhaseStart} from "../game_manager";
 import {beginNightPhase} from "./night_phase";
 import {SendMessage} from "../../discord/discord_message";
-import {joinCommandId} from "../game_constants";
+import {getAlivePlayers} from "../game_players";
+import {getVotingMessage} from "../game_messages";
 
 const votingLengthSeconds = 30;
 
@@ -15,16 +16,12 @@ export async function beginVotingPhase(gameState: GameState, channelId: string) 
     });
     gameState.votesCount = {}
     gameState.votersChoice = {}
-    const alivePlayers = Object.entries(gameState.players).filter(([id, player]) => !player.killed);
+    const alivePlayers = getAlivePlayers(gameState);
     for (const [id] of alivePlayers) {
         gameState.votesCount[id] = 0
     }
-    const playersInfoString = alivePlayers.map(([id, player]) => {
-        return `${player.name}${player.revealed ? ` (${player.role})` : ""} ---**${gameState.votesCount![id] || "0"}**`
-    }).join('\n');
-    gameState.votingMessage = (await (await SendMessage(channelId, {
-        content: `Send "</vote:${voteCommandId}> @playerId" to vote.\n**Players:**\n\n`+ playersInfoString
-    })).json()).id
+    const votingMessage = getVotingMessage(gameState, alivePlayers);
+    gameState.votingMessage = (await (await SendMessage(channelId, votingMessage)).json()).id
     // TODO actions like gunner shoot?
     await sleepTill(phaseEndTimestamp)
     let maxVotes = 0
