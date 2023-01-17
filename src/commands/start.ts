@@ -1,6 +1,4 @@
-import {Interaction} from "../discord/interaction";
 import {
-    GameState,
     maxPlayers,
     minPlayers,
 } from "../game/game";
@@ -13,7 +11,7 @@ const StartCommand: Command = {
         name: 'start',
         description: 'Starts the game. Requires 6-20 players.',
     },
-    async execute(interaction: Interaction, gameState: GameState) {
+    async execute(interaction, gameState) {
         const playerCount = Object.keys(gameState.players).length;
         if (playerCount < minPlayers) {
             return {

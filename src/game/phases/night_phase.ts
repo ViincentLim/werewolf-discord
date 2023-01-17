@@ -8,8 +8,8 @@ import {PermissionFlags} from "../../enums";
 import {wwGuildId} from "../game_constants";
 import {addLog, onPhaseEnd, onPhaseStart} from "../game_manager";
 import {beginDiscussionPhase} from "./discussion_phase";
-import {SelectOption} from "../../discord/interaction";
 import {RoleName} from "../game_role";
+import {getWerewolfVotingMessage} from "../game_messages";
 
 const nightLengthSeconds = 30;
 
@@ -59,36 +59,10 @@ export async function beginNightPhase(gameState: GameState, channelId: string) {
         guildId: wwGuildId,
         channelId: gameState.wwChannel!,
     })
-    const werewolfVoteOptions: SelectOption[] = []
-    for (const [aliveNonWerewolfId, aliveNonWerewolfPlayer] of Object.entries(gameState.players).filter(([id, player]) => !player.killed && !(gameState.werewolves || []).includes(id))) {
-        werewolfVoteOptions.push({
-            label: aliveNonWerewolfPlayer.name,
-            value: aliveNonWerewolfId
-        })
-    }
-
     gameState.wwVotesCount = {}
     gameState.wwVotersChoice = {}
-    SendMessage(gameState.wwChannel || "", {
-        content: "Vote for a player to kill tonight."+"\nVotes:\n\n"+werewolfVoteOptions.map(option => `${option.label} ---**${gameState.wwVotesCount![option.value]}**`).join("\n"),
-        components: [
-            {
-                components: [
-                    {
-                        custom_id: `werewolf_vote_${gameState.wwChannel}`,
-                        max_values: 1,
-                        min_values: 1,
-                        options: [
-                            werewolfVoteOptions
-                        ],
-                        placeholder: "Choose a player to kill.",
-                        type: 3
-                    }
-                ],
-                type: 1
-            }
-        ]
-    }).then(async r => {
+    const message = getWerewolfVotingMessage(gameState);
+    SendMessage(gameState.wwChannel || "", message).then(async r => {
         gameState.wwVotingMessage = (await r.json()).id;
     })
     // timer
