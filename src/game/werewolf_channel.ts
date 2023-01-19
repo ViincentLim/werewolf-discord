@@ -54,8 +54,9 @@ async function addUsersToWerewolfGuild(gameState: GameState, users: string[]) {
         addGuildMemberPromises.push(
             DiscordRequest({
                 endpoint: `guilds/${wwGuildId}/members/${user}`,
-                method: HtmlMethod.POST,
+                method: HtmlMethod.PUT,
                 body: {
+                    access_token: "", // TODO: https://stackoverflow.com/questions/59548815/how-to-add-a-user-to-a-guild-automatically
                     roles: [gameState.wwGuildRole],
                 }
             })

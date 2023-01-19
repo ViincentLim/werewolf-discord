@@ -1,6 +1,6 @@
 import {ApplicationCommandOptionType} from "../enums"
 import {Command} from "../discord/command";
-import {Interaction} from "../discord/interaction";
+import {ApplicationCommandInteraction} from "../discord/interaction";
 import {GameState} from "../game/game";
 import {getRole, RoleName} from "../game/game_role";
 import {InteractionResponseFlags} from "discord-interactions";
@@ -23,7 +23,7 @@ const CheckCommand: Command = {
             },
         ]
     },
-    async execute(interaction: Interaction, gameState: GameState) {
+    async execute(interaction: ApplicationCommandInteraction, gameState: GameState) {
         // console.log(interaction.data.options)
         // const playerIDs = interaction.data.options?.map(option => Number(option.value)) || []
         // const uid = Number(interaction.member?.user.id)

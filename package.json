@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "build": "tsc --build",
-    "start": "npm run build && node ./dist",
+    "start": "node ./dist",
+    "build-and-start": "npm run build && npm run start",
     "deploy_commands": "npm run build && node ./dist/deploy_commands.js",
     "game_administrative": "npm run build && node ./dist/game_administrative.js"
   },
